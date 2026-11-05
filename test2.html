@@ -1,0 +1,587 @@
+
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Contract Reminder Test</title>
+
+<style>
+
+*{
+    box-sizing:border-box;
+}
+
+body{
+    margin:0;
+    padding:15px;
+    font-family:Arial, sans-serif;
+    background:#f4f6f9;
+}
+
+.container{
+    max-width:1100px;
+    width:100%;
+    margin:auto;
+}
+
+.header{
+    background:#0066cc;
+    color:white;
+    padding:15px;
+    border-radius:10px;
+    margin-bottom:15px;
+}
+
+.header h1{
+    margin:0;
+}
+
+.card{
+    background:white;
+    padding:20px;
+    border-radius:10px;
+    box-shadow:0 2px 10px rgba(0,0,0,.1);
+    width:100%;
+}
+
+.form-group{
+    margin-bottom:15px;
+}
+
+label{
+    display:block;
+    margin-bottom:5px;
+    font-weight:bold;
+}
+
+input,
+textarea,
+select{
+    width:100%;
+    padding:12px;
+    border:1px solid #ccc;
+    border-radius:6px;
+    font-size:16px;
+}
+
+textarea{
+    min-height:120px;
+}
+
+input:focus,
+textarea:focus,
+select:focus{
+    border-color:#0066cc;
+    outline:none;
+}
+
+.note{
+    font-size:12px;
+    color:#666;
+    margin-top:5px;
+}
+
+.reminder-box{
+    border:1px solid #ddd;
+    border-radius:8px;
+    padding:10px;
+}
+
+.reminder-items{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(120px,1fr));
+    gap:10px;
+}
+
+.reminder-items label{
+    display:flex;
+    align-items:center;
+    gap:5px;
+    font-weight:normal;
+}
+
+.reminder-items input{
+    width:auto;
+    margin:0;
+}
+
+.action-buttons{
+    display:flex;
+    flex-wrap:wrap;
+    gap:10px;
+    margin-top:20px;
+}
+
+button{
+    padding:12px 20px;
+    border:none;
+    border-radius:6px;
+    color:white;
+    cursor:pointer;
+    min-height:48px;
+    font-size:15px;
+}
+
+button:hover{
+    opacity:.85;
+}
+
+.save{
+    background:#0066cc;
+}
+
+.update{
+    background:#28a745;
+}
+
+.clear{
+    background:#ff9800;
+}
+
+.search{
+    background:#17a2b8;
+}
+
+.export{
+    background:#6f42c1;
+}
+
+.exit{
+    background:#dc3545;
+}
+
+/* =========================
+   RESPONSIVE TABLE
+========================= */
+
+.grid-container{
+    margin-top:20px;
+    width:100%;
+    max-width:100%;
+    overflow-x:auto;
+    overflow-y:hidden;
+    -webkit-overflow-scrolling:touch;
+    border-radius:8px;
+}
+
+table{
+    width:100%;
+    min-width:750px;
+    border-collapse:collapse;
+    background:white;
+    table-layout:auto;
+}
+
+th{
+    background:#0066cc;
+    color:white;
+    white-space:normal;
+}
+
+th,
+td{
+    padding:12px;
+    border:1px solid #ddd;
+    vertical-align:middle;
+}
+
+td{
+    overflow-wrap:break-word;
+}
+
+.status-active{
+    color:green;
+    font-weight:bold;
+}
+
+#attachment2,
+#attachment3{
+    display:none;
+}
+
+/* =========================
+   RESPONSIVE HP ANDROID
+========================= */
+
+@media screen and (max-width:767px){
+
+    body{
+        padding:10px;
+    }
+
+    .container{
+        width:100%;
+    }
+
+    .header{
+        padding:15px;
+    }
+
+    .header h1{
+        font-size:20px;
+    }
+
+    .card{
+        padding:15px;
+    }
+
+    .action-buttons{
+        flex-direction:column;
+    }
+
+    button{
+        width:100%;
+    }
+
+    .reminder-items{
+        grid-template-columns:repeat(2,1fr);
+    }
+
+    /* Tabel bisa digeser ke kanan dan kiri */
+
+    .grid-container{
+        width:100%;
+        overflow-x:auto;
+        -webkit-overflow-scrolling:touch;
+    }
+
+    table{
+        width:750px;
+        min-width:750px;
+    }
+
+    th,
+    td{
+        padding:10px;
+        font-size:13px;
+    }
+
+}
+
+/* =========================
+   TABLET
+========================= */
+
+@media screen and (min-width:768px) and (max-width:1024px){
+
+    .header h1{
+        font-size:22px;
+    }
+
+    .card{
+        padding:18px;
+    }
+
+}
+
+/* =========================
+   DESKTOP
+========================= */
+
+@media screen and (min-width:1025px){
+
+    .header h1{
+        font-size:24px;
+    }
+
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<!-- HEADER -->
+
+<div class="header">
+    <h1>Contract Reminder Entry</h1>
+</div>
+
+<!-- FORM -->
+
+<div class="card">
+
+<div class="form-group">
+<label>Document Name</label>
+<input type="text" id="documentName">
+</div>
+
+<div class="form-group">
+<label>Subject</label>
+<input type="text" id="subject">
+</div>
+
+<div class="form-group">
+<label>Detail</label>
+<textarea id="detail"></textarea>
+</div>
+
+<div class="form-group">
+<label>CC Name</label>
+<input type="text" id="ccName">
+</div>
+
+<div class="form-group">
+<label>CC Email</label>
+<input
+type="text"
+id="ccEmail"
+placeholder="user1@email.com,user2@email.com">
+
+<div class="note">
+Pisahkan beberapa email dengan koma (,)
+</div>
+</div>
+
+<div class="form-group">
+<label>Start Date</label>
+<input type="date" id="startDate">
+</div>
+
+<div class="form-group">
+<label>End Date</label>
+<input type="date" id="endDate">
+</div>
+
+<div class="form-group">
+<label>Document Type</label>
+
+<select id="docType">
+<option>Contract Expired</option>
+<option>Annual</option>
+<option>Semester</option>
+<option>Quarterly</option>
+<option>Monthly</option>
+</select>
+</div>
+
+<div class="form-group">
+
+<label>Reminder Days</label>
+
+<div class="reminder-box">
+
+<div class="reminder-items">
+
+<label><input type="checkbox" checked> H-90</label>
+<label><input type="checkbox" checked> H-60</label>
+<label><input type="checkbox" checked> H-30</label>
+<label><input type="checkbox" checked> H-14</label>
+<label><input type="checkbox" checked> H-7</label>
+<label><input type="checkbox" checked> H-5</label>
+<label><input type="checkbox" checked> H-3</label>
+<label><input type="checkbox" checked> H-2</label>
+<label><input type="checkbox" checked> H-1</label>
+<label><input type="checkbox" checked> Hari H</label>
+
+</div>
+
+</div>
+
+</div>
+
+<div class="form-group">
+
+<label>Status</label>
+
+<select id="status">
+<option>Active</option>
+<option>Cancel</option>
+<option>Close</option>
+<option>Done</option>
+</select>
+
+</div>
+
+<div class="form-group">
+
+<label>Main Document</label>
+
+<input
+type="file"
+id="attachment1">
+
+</div>
+
+<div
+class="form-group"
+id="attachment2">
+
+<label>Supporting Document</label>
+
+<input type="file">
+
+</div>
+
+<div
+class="form-group"
+id="attachment3">
+
+<label>Additional Document</label>
+
+<input type="file">
+
+</div>
+
+<!-- BUTTONS -->
+
+<div class="action-buttons">
+
+<button class="save" type="button">
+Save
+</button>
+
+<button class="update" type="button">
+Update
+</button>
+
+<button class="clear" id="btnClear" type="button">
+Clear
+</button>
+
+<button class="search" type="button">
+Search
+</button>
+
+<button class="export" type="button">
+Export Excel
+</button>
+
+<button class="exit" type="button">
+Exit
+</button>
+
+</div>
+
+</div>
+
+<!-- TABLE -->
+
+<div class="grid-container">
+
+<table>
+
+<thead>
+
+<tr>
+<th>No</th>
+<th>Document</th>
+<th>Subject</th>
+<th>Start Date</th>
+<th>End Date</th>
+<th>Type</th>
+<th>Status</th>
+</tr>
+
+</thead>
+
+<tbody id="gridData">
+
+<tr>
+<td>1</td>
+<td>Vendor Contract</td>
+<td>Renewal Reminder</td>
+<td>2026-01-01</td>
+<td>2026-12-31</td>
+<td>Contract</td>
+<td class="status-active">Active</td>
+</tr>
+
+</tbody>
+
+</table>
+
+</div>
+
+</div>
+
+<script>
+
+// =========================
+// ATTACHMENT
+// =========================
+
+const attachment1 =
+document.getElementById("attachment1");
+
+attachment1.addEventListener(
+"change",
+function(){
+
+    if(this.files.length > 0){
+
+        document.getElementById(
+        "attachment2").style.display="block";
+
+    }
+
+});
+
+document
+.querySelector("#attachment2 input")
+.addEventListener(
+"change",
+function(){
+
+    if(this.files.length > 0){
+
+        document.getElementById(
+        "attachment3").style.display="block";
+
+    }
+
+});
+
+// =========================
+// CLEAR FORM
+// =========================
+
+document
+.getElementById("btnClear")
+.addEventListener(
+"click",
+function(){
+
+    document
+    .querySelectorAll(
+    "input[type=text],input[type=date],textarea")
+    .forEach(function(item){
+
+        item.value="";
+
+    });
+
+    document
+    .querySelectorAll("input[type=file]")
+    .forEach(function(item){
+
+        item.value="";
+
+    });
+
+    document
+    .querySelectorAll("input[type=checkbox]")
+    .forEach(function(item){
+
+        item.checked=true;
+
+    });
+
+    document.getElementById("docType").selectedIndex=0;
+
+    document.getElementById("status").selectedIndex=0;
+
+    document.getElementById("attachment2").style.display="none";
+
+    document.getElementById("attachment3").style.display="none";
+
+});
+
+</script>
+
+</body>
+</html>
